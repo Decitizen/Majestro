@@ -1,0 +1,2 @@
+# Majestro
+Majestro Password Manager
