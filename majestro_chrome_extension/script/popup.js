@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   import_accounts_file_input.addEventListener('onchange', function() {
-    
+    // TODO: implement import and export of accounts
   });
 
   mpassword_input.addEventListener('keyup', function() {
@@ -255,9 +255,10 @@ function derive_password(mpassword, smart_number, USER_ACCOUNTS_FILENAME) {
     var derived_pw = sjcl.misc.pbkdf2(pw_hash, smart_hash, CYCLES, PW_LENGTH);
     var password   = sjcl.codec.base64.fromBits(derived_pw);
 
-    // 4) Select a 24 letter substring of the string based on smart number
-    //    modded with constant value 17
-    begin_pw_placement = smart_number % 17
+    // 4) Select a 24 letter substring of the string. 
+    //    Find the first placement based on smart number
+    //    modded with constant mod value
+    begin_pw_placement = smart_number % MOD_VALUE
 
     password = password.substring(begin_pw_placement, begin_pw_placement+24);
     console.log('Derived Password:', password);
