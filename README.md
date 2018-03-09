@@ -23,6 +23,11 @@ __Master Password:__ ```this is the master password```
 For good security, smart number should be rather large, larger than 10e5 is recommended.
 Same applies to the Master password, more than 16characters is recommended.
 
+## Loading to Chrome
+Extension is not yet available in Chrome Store. 
+Instead it needs to be loaded as `unpacked extension` using __Chrome's developer mode__:
+![](majestro_load_chrome.gif)
+
 ## Development
 Development is on-going, incoming features:
 * Support for creating new accounts
