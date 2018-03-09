@@ -1,0 +1,107 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+  <head>
+    <!-- Credits to Font Awesome for their Awesome iconpack! -->
+    <link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style/popup.css">
+
+    <title>Majestro's Popup</title>
+    
+  </head>
+
+  <body>
+
+    <!-- Javascript libs -->
+    <script src="script/popup.js" type="text/javascript" charset="utf-8"></script>
+    <script src="script/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="script/sjcl.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- Big icon container, using bigger icon for landing page -->
+    <div id='icon_container' style="display: ">
+      <img src="images/icon_big.png">
+    </div>
+
+
+    <!-- Small icon container, using smaller icon for rest of the pages
+    * Toggle between small and big  -->
+    <div id='icon_container_small' style="display:none">
+      <img src="images/icon_big.png">
+    </div>
+
+    <div class="panel" id="smart_number_panel" style="display: ">
+      <h1><font color="#37ba61">Majestro <b></font>Pass</b>Manager</h1>
+      <input type="password" class="input_field" placeholder="&#8640 Input Smart Number &nbsp" id="smart_number_input">
+      <br>
+      <button class="next_button" id='smart_submit_button'>Unlock</button>
+      <br>
+      <button id='new_user_button'>New to Majestro? &#9658</button>
+      <div class="error-message" id="smart_number_error" style="display:none;">
+      </div>
+    </div>
+
+
+    <div class="panel" id="site_selector_panel" style="display:none">
+      <h1 class='titles'>Select account</h1>
+      
+      <!-- <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for sites.."> -->
+      
+      <hr class='title_line'>
+      <div class="error-message" id="site_select_error_message" style="display:none;">
+      </div>
+      <input list="select_site" id='site_datalist' placeholder='&#8640 List of accounts'>
+      <datalist id="select_site"></datalist>
+      <br> 
+      <button class="next_button" id='id_submit_button'>Select</button><br>
+      <div id='create_account_buttons'>
+      <button id='add_account_button'>Add account</button>
+      </div>
+    </div>
+
+    <div class="panel" id="masterpw_panel" style="display:none">
+      <!-- <h1 class="titles"><b>Master</b><font color="#444447"> Password</h1><br> -->
+      <div id='error_message_panel'>
+        <div class="error-message" id="masterpw_input_error" style="display:none;"></div>
+        <div class="error-message" id="masterpw_input_error_criteria" style="display:none;"></div>
+      </div>
+      <br>
+      <input class="input_panel" type="password" id="mpassword_input" placeholder="&#8640 Input Master Password"><i class="fas check fa-s" id="mp_check_sign"></i><br>
+      <hr class="text_line">
+    </div>
+
+    <div class="panel" id="copy_panel" style="display:none">
+      <h1 class="titles" id="ready_pw_title">Password</h1><br>
+      <input class="input_panel" type="password" id="copy_input"><br>
+      <button class="next_button" id='copy_button'>Copy</button>
+    </div>
+
+    <div class="panel" id="add_account_panel" style="display:none">
+      <h1 class="titles">Input account name</h1>
+      <hr class="title_line">
+      <input class="input_panel" type="text" id="add_account_input" placeholder="&#8640 Input Account Name &nbsp">
+      <hr class="text_line">
+      <button class="next_button" id='submit_new_account_button'>Add</button>
+      <br>
+      <button id='cancel_add_account_button'>Cancel</button>
+      <br><hr class="text_line">
+      
+      <div class="panel" id="import_export_panel" style="display:">
+        <button class="next_button" id='import_accounts_button'>Import</button>
+        <button class="next_button" id='export_accounts_button'>Export</button>
+      </div>
+
+      <div class="panel" id="import_panel" style="display:none">
+        <input name="import_accounts" type='file' id='import_accounts_file_input'><br>
+        <pre id="fileDisplayArea"><pre>
+      </div>
+    </div>
+
+  </body>
+</html>

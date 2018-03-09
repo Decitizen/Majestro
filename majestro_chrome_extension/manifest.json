@@ -1,0 +1,44 @@
+{
+  // Required
+  "name": "Majestro",
+  "version": "0.5",
+  "manifest_version": 2,
+
+  // Recommended
+  "description": "Majestro Extension",
+  "icons": {
+    "128": "images/icon.png"
+  },
+
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "windows": "Alt+Shift+M",
+        "mac": "Alt+Shift+M",
+        "chromeos": "Alt+Shift+M",
+        "linux": "Alt+Shift+M"
+      }
+    }
+  },
+
+  // Type of action
+  "browser_action": {
+    "list_of_sites": "list_of_crys.pswx",
+    "default_title": "Password is always for some reason, and for someone.",
+    "default_popup": "popup.html"
+  },
+
+  "web_accessible_resources": [
+    "images/*.png",
+    "style/popup.css",
+    "user_accounts.json",
+    "list_of_crys.pswx"
+  ],
+
+  // Intent of app
+  "permissions": [
+    "activeTab",
+    "storage",
+    "file://*/"
+  ]
+}

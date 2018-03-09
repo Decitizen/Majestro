@@ -1,0 +1,342 @@
+
+body {
+  background-size: cover;
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Roboto', sans-serif;
+  white-space: nowrap;
+  width: 240px;
+}
+
+p {
+  opacity: 0.5;
+  font-family: Roboto;
+  text-align: center;
+}
+
+h1 {
+  width: 100%;
+  text-align: center;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 15px;
+  opacity: 0.8;
+}
+
+img {
+  display: block;
+  max-height:100%;
+  max-width:100%;
+}
+
+#copy_input:hover {
+  opacity: 0.3;
+  color: #0cc6ff;
+}
+
+#copy_button:hover {
+  opacity: 0.99;
+  color: #ffffff;
+}
+
+.next_button:hover {
+  opacity: 0.99;
+  color: #ffffff;
+}
+
+#new_user_button:hover {
+  font-size: 0px;
+}
+
+#new_user_button:hover:after {
+  content: 'Create account';
+  font-size: 12px;
+  font-weight: 400;
+  color: #71e279;
+  opacity: 1.0;
+}
+
+.error-message {
+  color: #0cc6ff;
+  text-align: center;
+  margin-top: 5px;
+  opacity: 0.65;
+}
+
+.next_button {
+  font-family: Roboto;
+  font-weight: 300;
+  background: linear-gradient(270deg, #19c5ff, #26f218);
+  box-shadow: 0px 5px 6px -1px rgba(0,0,0,0.12);
+  border-radius: 3px;
+  border-width: 1px;
+  border-color: #26f218;
+  color: #fff;
+  height: 26px;
+  width: 100%;
+  margin-top: 6px;
+  opacity: 0.85;
+  text-align: center;
+}
+
+.input_field {
+  border-radius: 4px;
+  padding: auto;
+  text-align: center;
+  opacity: 0.4;
+}
+
+.input_panel {
+  padding: auto;
+  border-radius: 3px;
+  padding-top: 5px;
+  padding-bottom: 2px;
+  margin: auto;
+}
+
+.panel {
+  align-items: center;
+  padding-right: 35px;
+  padding-left: 35px;
+  padding-top: 5px;
+  padding-bottom: 50px;
+}
+
+.text_line {
+  width: 87%;
+  opacity: 0.1;
+  margin-bottom: 0px;
+}
+
+.text_line_password {
+  width: 79%;
+  opacity: 0.1;
+  padding-bottom: 10%;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+.title_line {
+  width: 75%;
+  opacity: 0.1;
+  margin-top: 2%;
+  margin-bottom: 6%;
+  margin-right: auto;
+  margin-left: 0px;
+
+}
+
+.titles {
+  color: #1889F9;
+  font-size: 13px;
+  text-align: left;
+  opacity: 0.73;
+  padding-top: 7%;
+  padding-bottom: 0%;
+  margin-bottom: 1%
+}
+
+#container {
+  align-items: center;
+  width: 200px;
+  margin: 5px;
+  height: 200px;
+  display: flex;
+  justify-content: space-between;
+}
+
+#copy_button {
+  width: 50%;
+  color: #efefef;
+  margin-top: 10%;
+  margin-left: 25%;
+  margin-right: 25%;
+}
+
+#copy_input {
+  text-align: center;
+  font-weight: 300;
+  opacity: 0.1;
+  background-color: transparent;
+  padding-bottom: 2px;
+  border: 0px solid;
+  width: 100%;
+  letter-spacing: -0.3px;
+}
+
+#add_account_button, #new_user_button {
+  font-weight: 200;
+  font-size: 11px;
+  font-family: 'Open Sans';
+  background: transparent;
+  border: 1px solid rgba(55, 186, 97, .25);
+  border-radius: 2px;
+  width: 100%;
+  height: 25px;
+  color: #37ba61;
+  opacity: 0.6;
+  outline: none;
+  margin-top: 6px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+#new_user_button {
+  border: 0px solid;
+  color: #b7b7b7;
+  margin-bottom: 0px;
+  opacity: 0.6;
+}
+
+#smart_number_panel {
+  padding-bottom: 20px;
+}
+
+
+#cancel_add_account_button {
+  color: #d38643;
+  font-weight: 200;
+  font-size: 11px;
+  font-family: 'Open Sans';
+  background: transparent;
+  border: 0.6px solid rgba(237, 182, 73, .45);
+  width: 100%;
+  height: 25px;
+  opacity: 0.8;
+  outline: none;
+  margin-top: 6px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+#error_message_panel {
+  height: 30%;
+  position: relative;
+}
+
+#icon_container {
+  max-width:100%;
+  margin-bottom: 18%;
+  margin-top: 25%;
+}
+
+#icon_container_small {
+  max-width:100%;
+  margin-bottom: 0%;
+  margin-top: 0%;
+}
+
+#import_accounts_button, #export_accounts_button {
+  background: linear-gradient(0deg, #000000, #333333);
+  border-color: #17a2ed;
+  border: 0px solid;
+  font-size: 11px;
+  font-family: 'Open Sans';
+  height: 24px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.64;
+  width: 49%;
+}
+
+#import_export_panel, #import_panel {
+  width: 100%;
+  padding-right: 0px;
+  padding-left: 0px;
+  padding-bottom: 0px;
+  padding-top: 5px;
+}
+
+#mpassword_input, #add_account_input {
+  font-size: 12px;
+  height: auto;
+  width: 85%;
+  margin-top: 0px;
+  margin-left: 5%;
+  margin-right: 1%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  opacity: 0.7;
+  background-color: transparent;
+  border: 0px solid;
+}
+
+#add_account_input {
+  margin-left: 7.5%;
+  margin-right: 7.5%;
+}
+
+#ready_pw_title {
+  text-align: center;
+}
+
+#select_site {
+  font-size: 8px;
+  font-family: Roboto;
+  font-weight: 200;
+  margin-right: 0%;
+}
+
+#site_datalist {
+  width: 97%;
+  text-align: center;
+  font-family: Roboto;
+  font-size: 12px;
+  color: #505054;
+}
+
+#site_selector_panel {
+  padding-bottom: 17%;
+} 
+
+#site_select_error_message {
+  padding-bottom: 7%;
+}
+
+#smart_number_input {
+  padding-top: 3px;
+  padding-bottom: 1px;
+  margin-bottom: 7px;
+  background-color: transparent;
+  border: 0px solid;
+  width: 100%;
+}
+
+textarea:focus, input:focus, select:focus {
+  outline: none;
+}
+
+#mp_check_sign {
+  color: #ff9c2b;
+  margin: 5%;
+  margin-left: 0%;
+  padding-right: 5%;
+}
+
+#site_list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.site_item {
+  border: 0.6px solid rgba(237, 182, 73, .45);
+  border-radius: 4px;
+  margin-bottom: 0px;
+  margin-top: -1px; /* Prevent double borders */
+  padding: 5px;
+  text-decoration: none;
+  font-weight: 200;
+  font-family: 'Open Sans';
+  font-size: 12px;
+  color: #edb649;
+  display: block
+}
+
+.site_item_hover { 
+  color: #ffffff;
+  opacity: 0.8;
+  background: linear-gradient(90deg, #edb649, #eadbab);
+  font-weight: 400;
+}
