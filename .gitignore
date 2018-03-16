@@ -1,3 +1,6 @@
-# Dependencies (Download them from their original repos)
 majestro_chrome_extension/script/sjcl.js
 majestro_chrome_extension/script/jquery-3.2.1.min.js
+majestro_chrome_extension/.vscode
+node_modules/
+.eslintrc.json
+package-lock.json
