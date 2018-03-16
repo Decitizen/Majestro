@@ -10,11 +10,11 @@
     <link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="style/popup.css">
 
     <title>Majestro's Popup</title>
-    
+
   </head>
 
   <body>
@@ -25,7 +25,7 @@
     <script src="script/sjcl.js" type="text/javascript" charset="utf-8"></script>
 
     <!-- Big icon container, using bigger icon for landing page -->
-    <div id='icon_container' style="display: ">
+    <div id='icon_container' style="display: block">
       <img src="images/icon_big.png">
     </div>
 
@@ -36,7 +36,7 @@
       <img src="images/icon_big.png">
     </div>
 
-    <div class="panel" id="smart_number_panel" style="display: ">
+    <div class="panel" id="smart_number_panel" style="display: block">
       <h1><font color="#37ba61">Majestro <b></font>Pass</b>Manager</h1>
       <input type="password" class="input_field" placeholder="&#8640 Input Smart Number &nbsp" id="smart_number_input">
       <br>
@@ -50,15 +50,15 @@
 
     <div class="panel" id="site_selector_panel" style="display:none">
       <h1 class='titles'>Select account</h1>
-      
+
       <!-- <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for sites.."> -->
-      
+
       <hr class='title_line'>
       <div class="error-message" id="site_select_error_message" style="display:none;">
       </div>
       <input list="select_site" id='site_datalist' placeholder='&#8640 List of accounts'>
       <datalist id="select_site"></datalist>
-      <br> 
+      <br>
       <button class="next_button" id='id_submit_button'>Select</button><br>
       <div id='create_account_buttons'>
       <button id='add_account_button'>Add account</button>
@@ -91,8 +91,8 @@
       <br>
       <button id='cancel_add_account_button'>Cancel</button>
       <br><hr class="text_line">
-      
-      <div class="panel" id="import_export_panel" style="display:">
+
+      <div class="panel" id="import_export_panel" style="display: block">
         <button class="next_button" id='import_accounts_button'>Import</button>
         <button class="next_button" id='export_accounts_button'>Export</button>
       </div>
