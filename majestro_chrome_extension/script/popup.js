@@ -123,10 +123,11 @@ document.addEventListener('DOMContentLoaded', function () {
   * @return {String} recognized - String if recognized, otherwise null
   */
   function recognize_site(current, site_array) {
-    const recognized = site_array.filter(x => x.toLowerCase().includes(current));
+    const recognized = site_array.find(x => x.toLowerCase().includes(current));
 
     const message = recognized ? 'Site recognized.' : 'Couldn\'t recognize site.';
     console.log(message);
+    console.log('recognized: ', recognized);
 
     return recognized;
   }
@@ -201,12 +202,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
       let recognized = recognize_site(current, account_json.site_accounts);
 
-      let site_datalist = document.getElementById('site_datalist');
-      let add_account_input = document.getElementById('add_account_input');
+      if (recognized) {
+        let site_datalist = document.getElementById('site_datalist');
+        let add_account_input = document.getElementById('add_account_input');
 
-      site_datalist.value = recognized;
-      add_account_input.value = current;
-
+        site_datalist.value = recognized;
+        add_account_input.value = current;
+      }
       populate_site_list(account_json.site_accounts);
       transition_to_id_selection();
     }
