@@ -1,5 +1,6 @@
 {
-    "user" : "account1", 
+    "user" : "account1",
     "smartnum" : "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
-    "masterpw" : "8d6228e796bea90fd87538b2021b434c592851544ec253b55b46c1fb28f4fdd0" 
+    "masterpw" : "8d6228e796bea90fd87538b2021b434c592851544ec253b55b46c1fb28f4fdd0",
+    "site_accounts" : [ "wikitribune.com", "stackoverflow" ]
 }
