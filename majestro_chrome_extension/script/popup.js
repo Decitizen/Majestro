@@ -7,7 +7,6 @@
 * Adds suitable eventlisteners and defines actions for GUI transitions.
 */
 const USER_DATA_FILENAME = 'userdata.txt';
-
 var ENCRYPTION_SETTINGS = {
   v:1,
   iter:10000,
@@ -51,19 +50,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
   $('#add_account_button').click(function () {
     $('#site_selector_panel').fadeOut('900', function () {
-      $('#add_account_panel').fadeIn('900');
+      $('add_site_account_panel').fadeIn('900');
     });
 
   });
 
   $('#cancel_add_account_button').click(function () {
-    $('#add_account_panel').fadeOut('900', function () {
+    $('add_site_account_panel').fadeOut('900', function () {
       $('#site_selector_panel').fadeIn('900');
     });
   });
 
   $('#submit_new_account_button').click(function () {
-    $('#add_account_panel').fadeOut('900', function () {
+    $('add_site_account_panel').fadeOut('900', function () {
       add_new_account();
       $('#site_selector_panel').fadeIn('900');
     });
@@ -253,8 +252,6 @@ async function load_user_details(filename, sk) {
   } catch (error) {
     console.error('File decryption was not successful:', error);
   }
-  console.log('user_details:', user_details);
-
   return user_details;
 }
 
