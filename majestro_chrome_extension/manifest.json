@@ -1,7 +1,7 @@
 {
   // Required
   "name": "Majestro",
-  "version": "0.52",
+  "version": "0.54",
   "manifest_version": 2,
 
   // Recommended
@@ -23,22 +23,18 @@
 
   // Type of action
   "browser_action": {
-    "list_of_sites": "list_of_crys.pswx",
     "default_title": "Password is always for some reason, and for someone.",
     "default_popup": "popup.html"
   },
 
   "web_accessible_resources": [
     "images/*.png",
-    "style/popup.css",
-    "user_accounts.json",
-    "list_of_crys.pswx"
+    "style/popup.css"
   ],
 
   // Intent of app
   "permissions": [
     "activeTab",
-    "storage",
-    "file://*/"
+    "storage"
   ]
 }
