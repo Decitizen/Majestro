@@ -3,9 +3,7 @@
 * @author DeepIntuition
 */
 
-/**
-* Adds suitable eventlisteners and defines actions for GUI transitions.
-*/
+
 const USER_DATA_FILENAME = 'userdata.txt';
 var ENCRYPTION_SETTINGS = {
   v:1,
@@ -17,14 +15,21 @@ var ENCRYPTION_SETTINGS = {
   cipher:'aes'
 };
 
+/**
+* Adds suitable eventlisteners and defines actions for GUI transitions.
+*/
 document.addEventListener('DOMContentLoaded', function () {
 
   // Inputs
   let copy_input = document.getElementById('copy_input');
   save_current_url();
 
-  $('#smart_submit_button').click(function() {
-    handle_smart_number();
+  $('#smart_submit_button').click(async function() {
+    const current_url = await load_from_storage('current_url');
+    $('#add_site_account_input').val(current_url);
+    console.log('Loaded current url successfully: ', current_url);
+
+    handle_smart_number(current_url);
   });
 
   $('#id_submit_button').click(async function() {
@@ -48,21 +53,21 @@ document.addEventListener('DOMContentLoaded', function () {
     copy_to_clipboard(mpassword.value);
   });
 
-  $('#add_account_button').click(function () {
+  $('#add_site_account_button').click(function () {
     $('#site_selector_panel').fadeOut('900', function () {
-      $('add_site_account_panel').fadeIn('900');
+      $('#add_site_account_panel').fadeIn('900');
     });
 
   });
 
-  $('#cancel_add_account_button').click(function () {
-    $('add_site_account_panel').fadeOut('900', function () {
+  $('#cancel_add_site_account_button').click(function () {
+    $('#add_site_account_panel').fadeOut('900', function () {
       $('#site_selector_panel').fadeIn('900');
     });
   });
 
   $('#submit_new_account_button').click(function () {
-    $('add_site_account_panel').fadeOut('900', function () {
+    $('#add_site_account_panel').fadeOut('900', function () {
       add_new_account();
       $('#site_selector_panel').fadeIn('900');
     });
@@ -179,26 +184,38 @@ function recognize_site(current, site_array) {
 /**
 * Handles validation of smart number, decrypts + populates account-names
 * and triggers transition effect to select account-view
+* @param {String} current_url
 */
-async function handle_smart_number() {
+async function handle_smart_number(current_url) {
   const smart_input_number = $('#smart_number_input').val();
-  const current = await load_from_storage('current_url');
-  console.log('Loaded current url successfully: ', current);
 
   // Derive secret key based on smart number
   const sk = secret_key_derivation(smart_input_number);
-  const user_account_promise = await load_user_details(USER_DATA_FILENAME, sk);
-  const account_json = await user_account_promise;
-  save_user_details(account_json);
+  let account_json = null;
 
-  const orig_smart_hash = account_json.smartnum;
-  if (validate_smart_number(orig_smart_hash, smart_input_number, account_json.masterpw)) {
+  if (isNaN(smart_input_number)) {
+    $('#smart_number_error').text('Not a number, try again.');
+    $('#smart_number_error').show();
+    console.log('ended up in NAN branch.');
+  } else {
+    const user_account_promise = await load_user_details(USER_DATA_FILENAME, sk);
+    account_json = await user_account_promise;
+    console.log('ended up in await user_account_promise branch.');
+
+    if (!account_json) {
+      $('#smart_number_error').text('Invalid Smart number.');
+      $('#smart_number_error').show();
+      console.log('ended up in Invalid Smart Number branch.');
+    }
+  }
+
+  if (validate_smart_hash(account_json.smartnum, smart_input_number, account_json.masterpw)) {
     console.log('Unlock with smart number performed successfully.');
-    const recognized = recognize_site(current, account_json.site_accounts);
+    save_user_details(account_json);
+    const recognized = recognize_site(current_url, account_json.site_accounts);
 
     if (recognized) {
       $('#site_datalist').val(recognized);
-      $('#add_account_input').val(current);
     }
 
     populate_site_list(account_json.site_accounts);
@@ -207,14 +224,35 @@ async function handle_smart_number() {
 }
 
 /**
+* Validate smart number input by comparing sha256 hash of input with the ones
+* fetched from the user_accounts.json
+* @param  {String}  orig_smart_hash - original smart hash
+* @param  {Number}  smart_input_value
+* @param  {String}  masterpw_hash
+* @return {Boolean}
+*/
+function validate_smart_hash(orig_smart_hash, smart_input_value, masterpw_hash) {
+  let input_hash = sjcl.hash.sha256.hash(smart_input_value);
+  input_hash = sjcl.hash.sha256.hash(input_hash + masterpw_hash);
+  input_hash = sjcl.codec.hex.fromBits(input_hash);
+
+  if (orig_smart_hash == input_hash) {
+    console.log('Smart number verified: ');
+    return true;
+  }
+  console.log('Smart number didn\'t match with selected user.');
+  return false;
+}
+
+/**
 * Handle functionality for adding new account.
 */
 function add_new_account() {
   // TODO: complete functionality for saving new accounts
   //
-  // let add_account_panel = document.getElementById('add_account_panel');
+  // let add_site_account_panel = document.getElementById('add_site_account_panel');
   // save_account('');
-  // $('#add_account_panel').fadeIn('500');
+  // $('#add_site_account_panel').fadeIn('500');
 }
 
 /**
@@ -235,7 +273,7 @@ function copy_to_clipboard(text_to_copy) {
 }
 
 /**
-* Fetches user details from the local file
+* Fetches (and decrypts) user details from the local file
 * @param {String} filename
 * @param {String} sk - secret key
 * @return {Object} encrypted data
@@ -260,31 +298,6 @@ function decrypt_user_details(encrypted_data, sk) {
 }
 
 /**
-* Validates the form of smart number input.
-* @param  {String}  smart_hash   - smart number hash
-* @param  {String}  masterpw_hash   - master password hash
-* @param  {Number}  smart_input_number - input number as a string
-* @return {Boolean} - true signifies successful validation
-*/
-function validate_smart_number(smart_hash, smart_input_number, masterpw_hash) {
-  let error_message = document.getElementById('smart_number_error');
-  let validate_flag = false;
-  let message = '';
-
-  if (isNaN(smart_input_number)) {
-    message = 'Not a number, try again.';
-  } else if (!validate_smart_hash(smart_hash, smart_input_number, masterpw_hash)) {
-    message = 'Invalid Smart number.';
-  } else {
-    validate_flag = true;
-  }
-
-  error_message.innerHTML = message;
-  error_message.style.display = validate_flag ? 'none' : 'block';
-  return validate_flag;
-}
-
-/**
 * Populates the datalist with sites given as a parameter.
 * @param {Array} site_array - sites as an array of strings
 */
@@ -304,27 +317,6 @@ function transform_icon() {
 
   icon_container.style.display = 'none';
   icon_container_small.style.display = '';
-}
-
-/**
-* Validate smart number input by comparing sha256 hash of input with the ones
-* fetched from the user_accounts.json
-* @param  {String}  orig_smart_hash - original smart hash
-* @param  {Number}  smart_input_value
-* @param  {String}  masterpw_hash
-* @return {Boolean}
-*/
-function validate_smart_hash(orig_smart_hash, smart_input_value, masterpw_hash) {
-  let input_hash = sjcl.hash.sha256.hash(smart_input_value);
-  input_hash = sjcl.hash.sha256.hash(input_hash + masterpw_hash);
-  input_hash = sjcl.codec.hex.fromBits(input_hash);
-
-  if (orig_smart_hash == input_hash) {
-    console.log('Smart number verified: ');
-    return true;
-  }
-  console.log('Smart number didn\'t match with a known user.');
-  return false;
 }
 
 /**
@@ -531,6 +523,3 @@ function encrypt_user_details(plaintext_data, sk) {
 
   return encr_user_details;
 }
-
-
-

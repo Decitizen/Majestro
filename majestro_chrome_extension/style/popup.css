@@ -164,7 +164,7 @@ img {
   letter-spacing: -0.3px;
 }
 
-#add_account_button, #new_user_button {
+#add_site_account_button, #new_user_button {
   font-weight: 200;
   font-size: 11px;
   font-family: 'Open Sans';
@@ -193,7 +193,7 @@ img {
 }
 
 
-#cancel_add_account_button {
+#cancel_add_site_account_button {
   color: #d38643;
   font-weight: 200;
   font-size: 11px;
@@ -247,7 +247,7 @@ img {
   padding-top: 5px;
 }
 
-#mpassword_input, #add_account_input {
+#mpassword_input, #add_site_account_input {
   font-size: 12px;
   height: auto;
   width: 85%;
@@ -262,7 +262,7 @@ img {
   border: 0px solid;
 }
 
-#add_account_input {
+#add_site_account_input {
   margin-left: 7.5%;
   margin-right: 7.5%;
 }
@@ -288,7 +288,7 @@ img {
 
 #site_selector_panel {
   padding-bottom: 17%;
-} 
+}
 
 #site_select_error_message {
   padding-bottom: 7%;
@@ -334,7 +334,7 @@ textarea:focus, input:focus, select:focus {
   display: block
 }
 
-.site_item_hover { 
+.site_item_hover {
   color: #ffffff;
   opacity: 0.8;
   background: linear-gradient(90deg, #edb649, #eadbab);
