@@ -3,7 +3,6 @@
 * @author DeepIntuition
 */
 
-
 const USER_DATA_FILENAME = 'userdata.txt';
 var ENCRYPTION_SETTINGS = {
   v:1,
@@ -16,105 +15,25 @@ var ENCRYPTION_SETTINGS = {
 };
 
 /**
-* Adds suitable eventlisteners and defines actions for GUI transitions.
+* Defines view-specific eventlisteners.
+* View flowchart:
+* View1 -> View 2(abc) -> View3 -> View4
 */
 document.addEventListener('DOMContentLoaded', function () {
-
-  // Inputs
-  let copy_input = document.getElementById('copy_input');
   save_current_url();
 
-  $('#smart_submit_button').click(async function() {
-    const current_url = await load_from_storage('current_url');
-    $('#add_site_account_input').val(current_url);
-    console.log('Loaded current url successfully: ', current_url);
-
-    handle_smart_number(current_url);
-  });
-
-  $('#id_submit_button').click(async function() {
-    let account_json = await load_from_storage('user_details');
-    let recognized = recognize_site($('#site_datalist').val(), account_json.site_accounts);
-
-    if (recognized) {
-      $('#site_selector_panel').fadeOut('500', function () {
-        $('#masterpw_panel').fadeIn('500');
-        $('#site_select_error_message').hide();
-      });
-    } else {
-      document.getElementById('site_select_error_message').innerHTML = '• Account doesn\'t exist.';
-      $('#site_select_error_message').show();
-    }
-
-  });
-
-  $('#copy_button').click(function () {
-    let mpassword = document.getElementById('copy_input');
-    copy_to_clipboard(mpassword.value);
-  });
-
-  $('#add_site_account_button').click(function () {
-    $('#site_selector_panel').fadeOut('900', function () {
-      $('#add_site_account_panel').fadeIn('900');
-    });
-
-  });
-
-  $('#cancel_add_site_account_button').click(function () {
-    $('#add_site_account_panel').fadeOut('900', function () {
-      $('#site_selector_panel').fadeIn('900');
-    });
-  });
-
-  $('#submit_new_account_button').click(function () {
-    $('#add_site_account_panel').fadeOut('900', function () {
-      add_new_account();
-      $('#site_selector_panel').fadeIn('900');
-    });
-  });
-
-  $('#import_accounts_button').click(function () {
-    $('#import_export_panel').fadeOut('900', function () {
-      $('#import_panel').fadeIn('900');
-    });
-  });
-
-  copy_input.addEventListener('mouseover', function () {
-    copy_input.type = 'text';
-  });
-
-  copy_input.addEventListener('mouseout', function () {
-    copy_input.type = 'password';
-  });
-
-  $('#import_accounts_file_input').change(function () {
-    // TODO: implement import and export of accounts
-  });
-
-  $('#mpassword_input').keyup(async function () {
-    const mpassword_input = $('#mpassword_input').val();
-    let input_number = document.getElementById('smart_number_input');
-    let mpassword_check_sign = document.getElementById('mp_check_sign');
-    const validate_promise = await validate_masterpw_hash(mpassword_input,
-      input_number.value);
-    const valid_masterpw = await validate_promise;
-
-    if (valid_masterpw) {
-      mpassword_check_sign.style.color = '#65aa05';
-      mpassword_check_sign.innerHTML = '';
-      $('#masterpw_input_error').fadeOut('fast');
-
-      derive_password(mpassword_input, input_number.value);
-    } else {
-      mpassword_check_sign.style.color = '#ff9c2b';
-      mpassword_check_sign.innerHTML = '';
-    }
-  });
-
-  $('.site_item').hover(function () {
-    $(this).toggleClass('site_item_hover');
-  });
-
+  // View 1: Smart number panel (id: smart_number_panel)
+  define_view1_event_listeners();
+  // View 2a: Select site (id: site_selector_panel)
+  define_view2a_event_listeners();
+  // View 2b: (id: add_site_account_panel)
+  define_view2b_event_listeners();
+  // View 2c: Import accounts
+  define_view2c_event_listeners();
+  // View 3:  (id: masterpw_panel)
+  define_view3_event_listeners();
+  // View 4:  (id: copy_panel)
+  define_view4_event_listeners();
 });
 
 /**
@@ -143,6 +62,150 @@ document.addEventListener('keyup', function (event) {
     }
   }
 });
+
+/**
+* Defines event listeners for View1.
+* In this view user can input his/her smart number, and
+* a new user can open Github page by clicking new_user_button
+*/
+function define_view1_event_listeners() {
+  // Smart number submit
+  $('#smart_submit_button').click(async function() {
+    const current_url = await load_from_storage('current_url');
+    $('#add_site_account_input').val(current_url);
+    console.log('Loaded current url successfully: ', current_url);
+
+    handle_smart_number(current_url);
+  });
+
+  // New user button
+  $('#new_user_button').click(function () {
+    window.open('https://github.com/DeepIntuition/Majestro');
+  });
+}
+
+/**
+* Defines event listeners for View2a.
+* In this view user can either select the site/account and submit,
+* or choose to modify accounts.
+*/
+function define_view2a_event_listeners() {
+  // Submit selected site
+  $('#id_submit_button').click(async function() {
+    let account_json = await load_from_storage('user_details');
+    let recognized = recognize_site($('#site_datalist').val(), account_json.site_accounts);
+
+    if (recognized) {
+      $('#site_selector_panel').fadeOut('500', function () {
+        $('#masterpw_panel').fadeIn('500');
+        $('#site_select_error_message').hide();
+      });
+    } else {
+      document.getElementById('site_select_error_message').innerHTML = '• Account doesn\'t exist.';
+      $('#site_select_error_message').show();
+    }
+
+  });
+
+  $('#add_site_account_button').click(function () {
+    $('#site_selector_panel').fadeOut('900', function () {
+      $('#add_site_account_panel').fadeIn('900');
+    });
+  });
+
+  // TODO: replace datalist with site_item-modules
+  $('.site_item').hover(function () {
+    $(this).toggleClass('site_item_hover');
+  });
+}
+
+/**
+* Defines event listeners for View2b.
+* In this view user can add new site/account, or import/export the accounts from/to a file.
+*/
+function define_view2b_event_listeners() {
+  // Submit new site/account -> to View3
+  $('#submit_new_site_account_button').click(async function () {
+    await add_new_account();
+    $('#add_site_account_panel').fadeOut('900', function () {
+      $('#site_selector_panel').fadeIn('900');
+    });
+  });
+
+  // Click cancel-button: <- to View2a
+  $('#cancel_add_site_account_button').click(function () {
+    $('#add_site_account_panel').fadeOut('900', function () {
+      $('#site_selector_panel').fadeIn('900');
+    });
+  });
+
+  // Click Import accounts button: -> View2c, import view
+  $('#import_accounts_button').click(function () {
+    $('#import_export_panel').fadeOut('900', function () {
+      $('#import_panel').fadeIn('900');
+    });
+  });
+
+}
+
+/**
+* Defines event listeners for View2c.
+* In this view user can select which file the import happens from.
+*/
+function define_view2c_event_listeners() {
+  $('#import_accounts_file_input').change(function () {
+    // TODO: implement import and export of accounts
+  });
+}
+
+/**
+* Defines event listeners for View3.
+* In this view user can enter the master password.
+*/
+function define_view3_event_listeners() {
+  // Input master password: -> View4
+  $('#mpassword_input').keyup(async function () {
+    const mpassword_input = $('#mpassword_input').val();
+    let input_number = document.getElementById('smart_number_input');
+    let mpassword_check_sign = document.getElementById('mp_check_sign');
+    const validate_promise = await validate_masterpw_hash(mpassword_input,
+      input_number.value);
+    const valid_masterpw = await validate_promise;
+
+    if (valid_masterpw) {
+      mpassword_check_sign.style.color = '#65aa05';
+      mpassword_check_sign.innerHTML = '';
+      $('#masterpw_input_error').fadeOut('fast');
+
+      derive_password(mpassword_input, input_number.value);
+    } else {
+      mpassword_check_sign.style.color = '#ff9c2b';
+      mpassword_check_sign.innerHTML = '';
+    }
+  });
+}
+
+/**
+* Defines event listeners for View4: final view.
+* In this view user can view the derived site-specific password
+* and copy it to clipboard.
+*/
+function define_view4_event_listeners() {
+  // Click copy-button: copy derived password to clipboard
+  $('#copy_button').click(function () {
+    let mpassword = document.getElementById('copy_input');
+    copy_to_clipboard(mpassword.value);
+  });
+
+  let copy_input = document.getElementById('copy_input');
+  copy_input.addEventListener('mouseover', function () {
+    copy_input.type = 'text';
+  });
+
+  copy_input.addEventListener('mouseout', function () {
+    copy_input.type = 'password';
+  });
+}
 
 /**
 * Validates that hash of the master password is valid.
@@ -196,16 +259,13 @@ async function handle_smart_number(current_url) {
   if (isNaN(smart_input_number)) {
     $('#smart_number_error').text('Not a number, try again.');
     $('#smart_number_error').show();
-    console.log('ended up in NAN branch.');
   } else {
     const user_account_promise = await load_user_details(USER_DATA_FILENAME, sk);
     account_json = await user_account_promise;
-    console.log('ended up in await user_account_promise branch.');
 
     if (!account_json) {
       $('#smart_number_error').text('Invalid Smart number.');
       $('#smart_number_error').show();
-      console.log('ended up in Invalid Smart Number branch.');
     }
   }
 
@@ -247,12 +307,19 @@ function validate_smart_hash(orig_smart_hash, smart_input_value, masterpw_hash) 
 /**
 * Handle functionality for adding new account.
 */
-function add_new_account() {
-  // TODO: complete functionality for saving new accounts
-  //
-  // let add_site_account_panel = document.getElementById('add_site_account_panel');
-  // save_account('');
-  // $('#add_site_account_panel').fadeIn('500');
+async function add_new_account() {
+  let account_json = await load_from_storage('user_details');
+  const current_url = $('#add_site_account_input').val();
+
+  confirm('Are you sure?');
+  account_json.site_accounts.push(current_url);
+  save_user_details(account_json);
+  populate_site_list(account_json.site_accounts);
+
+  save_user_details_encr(USER_DATA_FILENAME, account_json);
+  //let add_site_account_panel = document.getElementById('add_site_account_panel');
+  //save_account('');
+  $('#add_site_account_panel').fadeIn('500');
 }
 
 /**
@@ -377,7 +444,7 @@ function save_current_url() {
 
 /**
 * Save user details using storage API
-* @param {Object} user_details - details of user's accounts
+* @param {Object} user_details - user's information
 */
 function save_user_details(user_details) {
   let items = {};
@@ -446,7 +513,6 @@ function pbkdf2_hash_masterpw(mpassword, smart_number) {
 * smart number and account name.
 * @param {String} mpassword - master password associated with account
 * @param {String} smart_number - smart number associated with account
-* @param {String} USER_ACCOUNTS_FILENAME
 */
 function derive_password(mpassword, smart_number) {
   const CYCLES = 10000;
@@ -489,18 +555,11 @@ function derive_password(mpassword, smart_number) {
 /**
 * Fetches user details from the local file
 * @param {String} filename
+* @param {Object} user_details - user's information
 * @return {Object} encrypted data
 */
-function save_user_details_encr(filename, smart_number) {
-  const encr_file_string = $.get(chrome.runtime.getURL(filename));
-  const sk = secret_key_derivation();
-  let user_details;
-  try {
-    const decr_file_string = decrypt_user_details(encr_file_string, sk);
-    user_details = JSON.parse(decr_file_string);
-  } catch (error) {
-    console.log('File decryption was not successful:', error.message);
-  }
+function save_user_details_encr(filename, user_details) {
+  const sk = secret_key_derivation($('#smart'));
 
   return user_details;
 }
