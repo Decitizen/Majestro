@@ -192,6 +192,10 @@ img {
   padding-bottom: 20px;
 }
 
+#exists_new_site_account_button {
+  background: coral;
+  border-color: coral;
+}
 
 #cancel_add_site_account_button {
   color: #d38643;

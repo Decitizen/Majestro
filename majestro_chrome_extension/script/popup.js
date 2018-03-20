@@ -21,18 +21,19 @@ var ENCRYPTION_SETTINGS = {
 */
 document.addEventListener('DOMContentLoaded', function () {
   save_current_url();
+  init_test_user(USER_DATA_FILENAME);
 
   // View 1: Smart number panel (id: smart_number_panel)
   define_view1_event_listeners();
   // View 2a: Select site (id: site_selector_panel)
   define_view2a_event_listeners();
-  // View 2b: (id: add_site_account_panel)
+  // View 2b: Add new accout (id: add_site_account_panel)
   define_view2b_event_listeners();
   // View 2c: Import accounts
   define_view2c_event_listeners();
-  // View 3:  (id: masterpw_panel)
+  // View 3: Input master password (id: masterpw_panel)
   define_view3_event_listeners();
-  // View 4:  (id: copy_panel)
+  // View 4: Show derived password (id: copy_panel)
   define_view4_event_listeners();
 });
 
@@ -71,9 +72,9 @@ document.addEventListener('keyup', function (event) {
 function define_view1_event_listeners() {
   // Smart number submit
   $('#smart_submit_button').click(async function() {
-    const current_url = await load_from_storage('current_url');
+    const current_url = await load_from_local_storage('current_url');
     $('#add_site_account_input').val(current_url);
-    console.log('Loaded current url successfully: ', current_url);
+    console.debug('Loaded current url successfully: ', current_url);
 
     handle_smart_number(current_url);
   });
@@ -92,16 +93,17 @@ function define_view1_event_listeners() {
 function define_view2a_event_listeners() {
   // Submit selected site
   $('#id_submit_button').click(async function() {
-    let account_json = await load_from_storage('user_details');
-    let recognized = recognize_site($('#site_datalist').val(), account_json.site_accounts);
+    let account_json = await load_from_global_storage('user_details');
+    const current_url = $('#site_datalist').val();
+    const exists = account_json.site_accounts.some(x => x == current_url);
 
-    if (recognized) {
+    if (exists) {
       $('#site_selector_panel').fadeOut('500', function () {
         $('#masterpw_panel').fadeIn('500');
         $('#site_select_error_message').hide();
       });
     } else {
-      document.getElementById('site_select_error_message').innerHTML = '• Account doesn\'t exist.';
+      $('#site_select_error_message').text('• Account doesn\'t exist.');
       $('#site_select_error_message').show();
     }
 
@@ -125,11 +127,29 @@ function define_view2a_event_listeners() {
 */
 function define_view2b_event_listeners() {
   // Submit new site/account -> to View3
-  $('#submit_new_site_account_button').click(async function () {
-    await add_new_account();
-    $('#add_site_account_panel').fadeOut('900', function () {
-      $('#site_selector_panel').fadeIn('900');
+  $('#submit_new_site_account_button').click(function () {
+    $('#submit_new_site_account_button').fadeOut('400', function() {
+      $('#confirm_new_site_account_button').fadeIn('400');
     });
+  });
+
+  $('#confirm_new_site_account_button').click(async function () {
+    if (!await add_new_account()) {
+      $('#confirm_new_site_account_button').fadeOut('100', function() {
+        $('#exists_new_site_account_button').fadeIn('100', function() {
+          $('#exists_new_site_account_button').fadeOut('100', function() {
+            $('#submit_new_site_account_button').fadeIn('400');
+          });
+        });
+      });
+    } else {
+      $('#add_site_account_panel').fadeOut('900', function () {
+        $('#site_selector_panel').fadeIn('900', function () {
+          $('#submit_new_site_account_button').show();
+          $('#confirm_new_site_account_button').hide();
+        });
+      });
+    }
   });
 
   // Click cancel-button: <- to View2a
@@ -145,7 +165,6 @@ function define_view2b_event_listeners() {
       $('#import_panel').fadeIn('900');
     });
   });
-
 }
 
 /**
@@ -207,6 +226,9 @@ function define_view4_event_listeners() {
   });
 }
 
+
+// Models / Logic
+
 /**
 * Validates that hash of the master password is valid.
 * @param {String} mpassword - master password associated with account
@@ -218,13 +240,13 @@ async function validate_masterpw_hash(mpassword, smart_number) {
   const derived_pbkdf2 = pbkdf2_hash_masterpw(mpassword,smart_number);
 
   // Verify against original hash
-  let account_json = await load_from_storage('user_details');
+  let account_json = await load_from_local_storage('user_details');
   if (account_json.masterpw == derived_pbkdf2) {
-    console.log('Masterpw validated.');
+    console.debug('Masterpw validated.');
 
     return true;
   }
-  console.log('Masterpw invalid.');
+  console.debug('Masterpw invalid.');
   return false;
 }
 
@@ -238,8 +260,8 @@ function recognize_site(current, site_array) {
   const recognized = site_array.find(x => x.toLowerCase().includes(current));
 
   const message = recognized ? 'Site recognized.' : 'Couldn\'t recognize site.';
-  console.log(message);
-  console.log('recognized: ', recognized);
+  console.debug(message);
+  console.debug('recognized: ', recognized);
 
   return recognized;
 }
@@ -260,7 +282,7 @@ async function handle_smart_number(current_url) {
     $('#smart_number_error').text('Not a number, try again.');
     $('#smart_number_error').show();
   } else {
-    const user_account_promise = await load_user_details(USER_DATA_FILENAME, sk);
+    const user_account_promise = await load_encr_user_details(sk);
     account_json = await user_account_promise;
 
     if (!account_json) {
@@ -270,8 +292,8 @@ async function handle_smart_number(current_url) {
   }
 
   if (validate_smart_hash(account_json.smartnum, smart_input_number, account_json.masterpw)) {
-    console.log('Unlock with smart number performed successfully.');
-    save_user_details(account_json);
+    console.debug('Unlock with smart number performed successfully.');
+    save_data('user_details', account_json, false);
     const recognized = recognize_site(current_url, account_json.site_accounts);
 
     if (recognized) {
@@ -297,29 +319,30 @@ function validate_smart_hash(orig_smart_hash, smart_input_value, masterpw_hash) 
   input_hash = sjcl.codec.hex.fromBits(input_hash);
 
   if (orig_smart_hash == input_hash) {
-    console.log('Smart number verified: ');
+    console.debug('Smart number verified: ');
     return true;
   }
-  console.log('Smart number didn\'t match with selected user.');
+  console.debug('Smart number didn\'t match with selected user.');
   return false;
 }
 
 /**
 * Handle functionality for adding new account.
+* @return {Boolean} false if account name already existed, true if the address was new
 */
 async function add_new_account() {
-  let account_json = await load_from_storage('user_details');
+  let account_json = await load_from_local_storage('user_details');
   const current_url = $('#add_site_account_input').val();
+  const exists = account_json.site_accounts.some(x => x == current_url);
+  if (!exists) {
+    account_json.site_accounts.push(current_url);
+    populate_site_list(account_json.site_accounts);
+    save_data('user_details', account_json, true);
+    save_user_details_encr(account_json);
 
-  confirm('Are you sure?');
-  account_json.site_accounts.push(current_url);
-  save_user_details(account_json);
-  populate_site_list(account_json.site_accounts);
-
-  save_user_details_encr(USER_DATA_FILENAME, account_json);
-  //let add_site_account_panel = document.getElementById('add_site_account_panel');
-  //save_account('');
-  $('#add_site_account_panel').fadeIn('500');
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -340,14 +363,12 @@ function copy_to_clipboard(text_to_copy) {
 }
 
 /**
-* Fetches (and decrypts) user details from the local file
-* @param {String} filename
+* Fetches (and decrypts) user details from the global storage
 * @param {String} sk - secret key
-* @return {Object} encrypted data
+* @return {Object} decrypted data
 */
-async function load_user_details(filename, sk) {
-  const data_object_promise = await $.get(chrome.runtime.getURL(filename));
-  const encr_file_string = await data_object_promise;
+async function load_encr_user_details(sk) {
+  const encr_file_string = await load_from_global_storage('encrypted_user_details');
 
   let user_details;
   try {
@@ -360,6 +381,11 @@ async function load_user_details(filename, sk) {
   return user_details;
 }
 
+/**
+* Decrypts user details from the local file
+* @param {String} sk - secret key
+* @return {Object} encrypted data
+*/
 function decrypt_user_details(encrypted_data, sk) {
   return sjcl.decrypt(sk, encrypted_data);
 }
@@ -429,39 +455,60 @@ function save_current_url() {
     const match_index = 0;
     const prefix_regex = /(^\w+:|^)\/\//;
     const suffix_regex = /[^/]*/;
-    console.log('Url fetched:', url);
+    console.debug('Url fetched:', url);
 
     let strip_url = url.replace(prefix_regex, '');
     strip_url = strip_url.match(suffix_regex)[match_index];
 
     let items = {};
     items['current_url'] = strip_url;
-    chrome.storage.sync.set(items);
+    chrome.storage.local.set(items);
 
-    console.log('Url', strip_url, 'saved successfully.');
+    console.debug('Url', strip_url, 'saved successfully.');
   });
 }
 
 /**
-* Save user details using storage API
-* @param {Object} user_details - user's information
+* Save given data using storage API
+* @param {String} data_key, data_key - key for the data as a string
+* @param {Object} data - data that is to be stored
+* @param {Boolean} global - true if global sync, false if local
 */
-function save_user_details(user_details) {
+function save_data(data_key, data, global = true) {
   let items = {};
-  items['user_details'] = user_details;
-  chrome.storage.sync.set(items);
+  items[data_key] = data;
+  if (global) {
+    chrome.storage.sync.set(items);
+  } else {
+    chrome.storage.local.set(items);
+  }
 }
 
 /**
-* Load current URL by using the storage API.
+* Load current URL by using the storage sync (global) API.
 * @param {String} item - name of the item (key in the hashtable)
 * @param {function(string)} callback called when the actual URL of
 * the current tab is found from the storage API.
 */
-function load_from_storage(item) {
+function load_from_global_storage(item) {
   return new Promise(resolve => {
     chrome.storage.sync.get(item, (items) => {
-      console.log('Loading item ', item, '...');
+      console.debug('Loading item ', item, '...');
+      resolve(chrome.runtime.lastError ? null : items[item]);
+    });
+  });
+}
+
+/**
+* Load current URL by using the storage local API.
+* @param {String} item - name of the item (key in the hashtable)
+* @param {function(string)} callback called when the actual URL of
+* the current tab is found from the storage API.
+*/
+function load_from_local_storage(item) {
+  return new Promise(resolve => {
+    chrome.storage.local.get(item, (items) => {
+      console.debug('Loading item ', item, '...');
       resolve(chrome.runtime.lastError ? null : items[item]);
     });
   });
@@ -484,7 +531,7 @@ function secret_key_derivation(smart_number) {
     let sm_number_hash = sjcl.hash.sha256.hash(smart_number);
     sk = sjcl.misc.pbkdf2(sm_number_hash, smart_number_salt, CYCLES, PW_BITS);
   } catch (error) {
-    console.log('Exception occurred during the Secret Key derivation:', error.message);
+    console.debug('Exception occurred during the Secret Key derivation:', error.message);
   }
 
   return sk;
@@ -553,13 +600,14 @@ function derive_password(mpassword, smart_number) {
 }
 
 /**
-* Fetches user details from the local file
-* @param {String} filename
+* Save encrypted user details to the global storage
 * @param {Object} user_details - user's information
 * @return {Object} encrypted data
 */
-function save_user_details_encr(filename, user_details) {
-  const sk = secret_key_derivation($('#smart'));
+function save_user_details_encr(user_details) {
+  const sk = secret_key_derivation($('#smart_number_input').val());
+  const encrypted_user_details = encrypt_user_details(user_details, sk);
+  save_data('encrypted_user_details', encrypted_user_details, true);
 
   return user_details;
 }
@@ -577,8 +625,24 @@ function encrypt_user_details(plaintext_data, sk) {
     const ptext_data_string = JSON.stringify(plaintext_data);
     encr_user_details = sjcl.encrypt(sk, ptext_data_string);
   } catch (error) {
-    console.log('File encryption was not successful:', error.message);
+    console.debug('File encryption was not successful:', error.message);
   }
 
   return encr_user_details;
+}
+/**
+* In the first startup, if there is no account in chrome storage API, saves encrypted
+* test user details into chrome storage API.
+* @param {String} filename
+*/
+async function init_test_user(filename) {
+  const encrypted_user_details = await $.get(chrome.runtime.getURL(filename));
+  const is_data = await load_from_global_storage('encrypted_user_details');
+  if (!is_data) {
+    save_data('encrypted_user_details', encrypted_user_details, true);
+
+    console.debug('Storage API populated with test user data.');
+  } else {
+    console.debug('Storage API already populated with data:', is_data);
+  }
 }
