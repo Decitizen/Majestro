@@ -23,6 +23,7 @@
     <script src="script/sjcl.js" type="text/javascript" charset="utf-8"></script>
     <script src="script/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="script/crypto.js" type="module"></script>
+    <script src="script/accountlist.js" type="module"></script>
     <script src="script/popup.js" type="module" charset="utf-8"></script>
 
     <!-- Big icon container, using bigger icon for landing page -->
@@ -55,14 +56,16 @@
       <!-- <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for sites.."> -->
 
       <hr class='title_line'>
-      <div class="error-message" id="site_select_error_message" style="display:none;">
-      </div>
-      <input list="select_site" id='site_datalist' placeholder='&#8640 List of accounts'>
-      <datalist id="select_site"></datalist>
-      <br>
-      <button class="next_button" id='id_submit_button'>Select</button><br>
-      <div id='create_account_buttons'>
-      <button id='add_site_account_button'>Add account</button>
+      <div id="account-list" style="display:block"></div><br>
+      <div class="site_select_btn_group_bottom">
+        <input id='site_datalist' placeholder='&#8640 List of accounts'><br>
+        <button class="next_button" id='id_submit_button'>Select</button><br>
+        <button class="next_button" id='delete_account_button'>Delete</button>
+        <button class="next_button" id='confirm_delete_site_account_button' style="display:none">Confirm</button><br>
+        <div id='create_account_buttons'>
+          <button id='add_site_account_button'>Add account</button>
+        </div>
+        <div class="error-message" id="site_select_error_message" style="display:none;"></div>
       </div>
     </div>
 
