@@ -1,4 +1,5 @@
 
+
 export default class AccountList {
 
   constructor() {
@@ -24,11 +25,10 @@ export default class AccountList {
     $("#account-list").empty();
     accounts = accounts.sort();
     await accounts.forEach( (account) => this.createAccountCard(account) );
+
     $('.account_button').click(function() {
-      console.log('text of this:');
-      $('#site_datalist').val($(this).text());
+      $('#selected_account').val($(this).text());
       $('#site_select_error_message').hide();
     });
   }
-
 }

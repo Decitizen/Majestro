@@ -39,7 +39,7 @@
     </div>
 
     <div class="panel" id="smart_number_panel" style="display: block">
-      <h1><font color="#37ba61">Majestro <b></font>Pass</b>Manager</h1>
+      <h1><font color="#37ba61">Majestro </font>PassManager</h1>
       <input type="password" class="input_field" placeholder="&#8640 Input Smart Number &nbsp" id="smart_number_input">
       <br>
       <button class="next_button" id='smart_submit_button'>Unlock</button>
@@ -51,14 +51,15 @@
 
 
     <div class="panel" id="site_selector_panel" style="display:none">
-      <h1 class='titles'>Select account</h1>
-
+      <div class='site_selector_btn_group_top'>
+        <input id='site_datalist' placeholder='Search'>
+        <span class='fa fa-search'></span>
+      </div>
       <!-- <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for sites.."> -->
 
-      <hr class='title_line'>
-      <div id="account-list" style="display:block"></div><br>
+      <div id="account-list" style="display:block"></div>
       <div class="site_select_btn_group_bottom">
-        <input id='site_datalist' placeholder='&#8640 List of accounts'><br>
+        <input id='selected_account' type="hidden">
         <button class="next_button" id='id_submit_button'>Select</button><br>
         <button class="next_button" id='delete_account_button'>Delete</button>
         <button class="next_button" id='confirm_delete_site_account_button' style="display:none">Confirm</button><br>
@@ -76,12 +77,16 @@
         <div class="error-message" id="masterpw_input_error_criteria" style="display:none;"></div>
       </div>
       <br>
-      <input class="input_panel" type="password" id="mpassword_input" placeholder="&#8640 Input Master Password"><i class="fas check fa-s" id="mp_check_sign"></i><br>
-      <hr class="text_line">
+      <div class="div_password_status">
+        <i class="fas check fa-s" id="mp_check_sign"></i><br>
+      </div>
+      <input class="input_panel" type="password" id="mpassword_input" placeholder="&#8640 Input Master Password"><br>
+      <hr class="text_line_mpass">
+
     </div>
 
     <div class="panel" id="copy_panel" style="display:none">
-      <h1 class="titles" id="ready_pw_title">Password</h1><br>
+      <h1 class="titles" id="ready_pw_title">Ready!</h1><br>
       <input class="input_panel" type="password" id="copy_input"><br>
       <button class="next_button" id='copy_button'>Copy</button>
     </div>

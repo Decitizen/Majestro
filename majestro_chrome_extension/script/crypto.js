@@ -95,7 +95,7 @@ export default class CryptoTools {
     const MOD_VALUE = 17;
     const PW_CHAR_LENGTH = 24;
 
-    let site_name = document.getElementById('site_datalist');
+    let site_name = selected_account;
     $('#smart_number_error').hide();
     $('#masterpw_panel').fadeOut('slow', function () {
       // Site-specific password is derived in 4 phases

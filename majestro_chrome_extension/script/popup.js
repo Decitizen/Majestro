@@ -62,6 +62,16 @@ document.addEventListener('keyup', function (event) {
 });
 
 /**
+*
+*/
+$('#site_datalist').keyup(async () => {
+  let str = $('#site_datalist').val();
+  let account_json = await load_from_local_storage('user_details');
+  account_json.site_accounts = account_json.site_accounts.filter((e) => String(e).includes(str));
+  await populate_site_list(account_json.site_accounts);
+});
+
+/**
 * Defines event listeners for View1.
 * In this view user can input his/her smart number, and
 * a new user can open Github page by clicking new_user_button
@@ -92,7 +102,7 @@ function define_view2a_event_listeners() {
   $('#delete_account_button').click(function() {
     $('#site_select_error_message').hide();
 
-    const account_val = $('#site_datalist').val();
+    const account_val = $('#selected_account').val();
 
     if (account_val !== '') {
       $('#delete_account_button').fadeOut('400', function() {
@@ -106,7 +116,7 @@ function define_view2a_event_listeners() {
 
   $('#confirm_delete_site_account_button').click(function () {
     $('#confirm_delete_site_account_button').fadeOut('100', function() {
-      const account_val = $('#site_datalist').val();
+      const account_val = $('#selected_account').val();
       delete_account(account_val);
       $('#site_datalist').val('');
       $('#delete_account_button').fadeIn('400');
@@ -115,10 +125,11 @@ function define_view2a_event_listeners() {
 
   // Submit selected site
   $('#id_submit_button').click(async function() {
-    let account_json = await load_from_global_storage('user_details');
-    const current_url = $('#site_datalist').val();
-    const exists = account_json.site_accounts.some(x => x == current_url);
-
+    let account_json = await load_from_local_storage('user_details');
+    const current_url = $('#selected_account').val()
+    console.log('Selected account:', current_url);
+    const exists = account_json.site_accounts.some(x => String(x) === String(current_url));
+    console.log('Exists:', exists);
     if (exists) {
       $('#site_selector_panel').fadeOut('500', function () {
         $('#masterpw_panel').fadeIn('500');
@@ -216,8 +227,12 @@ function define_view3_event_listeners() {
 
         crypto.derive_password(mpassword_input, input_number.value);
       } else {
+        if (mpassword_check_sign.offsetParent === null) {
+          $('#mp_check_sign').fadeIn('900');
+        }
         mpassword_check_sign.style.color = '#ff9c2b';
         mpassword_check_sign.innerHTML = '';
+
       }
     });
   }
@@ -294,7 +309,12 @@ function define_view3_event_listeners() {
       const recognized = recognize_site(current_url, account_json.site_accounts);
 
       if (recognized) {
-        $('#site_datalist').val(recognized);
+        $('.div_recognized').fadeIn('500', () => {
+          $('#recognized_message').text(recognized, 'recognized.');
+        });
+
+        $('#site_select_error_message').show();
+        $('#selected_account').val(recognized);
       }
 
       populate_site_list(account_json.site_accounts);
