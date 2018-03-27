@@ -32,7 +32,9 @@ Development is on-going, incoming features:
 - [ ] Support for creating a new personal account
 - [ ] Support for importing accounts from file 
 - [ ] Support for exporting accounts to file
-- [ ] New component and css-style for account
+- [x] Add search bar
+- [x] Support for deleting accounts (v 0.7)
+- [x] New component and css-style for account (v 0.7)
 - [x] Support for adding new sites (v 0.6)
 - [x] Support for chrome API storage (sync of accounts) (v 0.6)
 - [x] Encryption of own websites (v 0.55)
