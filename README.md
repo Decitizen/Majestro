@@ -1,7 +1,7 @@
 # Majestro
 __Majestro Password Manager__ is a lightweight Chrome extension that lets you derive site-specific passwords using __master__ password. 
 
-![](Majestro_usage.gif)
+![](Majestro_usage_0.75.gif)
 
 Majestro's __password derivation function__ is dependent on two *secrets*: 
 
@@ -32,7 +32,7 @@ Development is on-going, incoming features:
 - [ ] Support for creating a new personal account
 - [ ] Support for importing accounts from file 
 - [ ] Support for exporting accounts to file
-- [x] Add search bar
+- [x] Search bar (v 0.72)
 - [x] Support for deleting accounts (v 0.7)
 - [x] New component and css-style for account (v 0.7)
 - [x] Support for adding new sites (v 0.6)
