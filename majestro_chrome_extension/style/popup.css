@@ -110,8 +110,11 @@ img {
 }
 
 #account-list {
+  background: #ffffff;
   width: 100%;
-  height: 14em;
+  opacity: 0.99;
+  max-height: 300px;
+  min-height: 300px;
   padding-top: 0.4em;
   padding-bottom: 0.3em;
   border-radius: 0.2em;
@@ -131,7 +134,7 @@ img {
 }
 
 
-.account_item, .account_button {
+.account_item, .account_button, .account_recognized_item {
   font-family: "Open Sans";
   font-size: 10px;
   background: transparent;
@@ -145,13 +148,14 @@ img {
   text-align: center;
 }
 
-.account_item {
+.account_item, .account_recognized_item {
   border: 1px solid rgba(0,0,0,0.12);
   box-shadow: 0px 1px 2px 1px rgba(0,0,0,0.05);
   padding: 0.7em 0.2em 0.2em 0.2em;
   height: 2em;
   margin: 0em 0.5em 0.2em 0.5em;
 }
+
 .account_button:hover {
   opacity: 1;
   color: blueviolet;
@@ -167,12 +171,28 @@ img {
   color: blueviolet;
 }
 
+.account_recognized_item {
+  animation-iteration-count: infinite;
+  animation-name: glowFlux;
+  animation-duration: 1s;
+	animation-timing-function: ease-in-out;
+  opacity: 1.0;
+  font-weight: bold;
+  color: #00ce63;
+  margin: 0em 5px 0.2em 5px;
+}
+
 .panel {
   align-items: center;
   padding-right: 35px;
   padding-left: 35px;
   padding-top: 5px;
   padding-bottom: 50px;
+}
+
+.recognized_message {
+  color: #00ce63;
+  margin: 1em 0 1em 0;
 }
 
 .text_line, .text_line_mpass {
@@ -186,7 +206,7 @@ img {
   width: 55%;
   margin-left: 6.5%;
   margin-right: 6.5%;
-  bottom: 3.8em;
+  bottom: 6em;
 }
 
 .text_line_password {
@@ -212,7 +232,7 @@ img {
   font-size: 13px;
   text-align: left;
   opacity: 0.73;
-  padding-top: 7%;
+  padding-top: 110%;
   padding-bottom: 0%;
   margin-bottom: 1%
 }
@@ -221,6 +241,7 @@ img {
   position: relative;
   width: 100%;
   background: #ffffff;
+  margin-bottom: -20px;
 }
 
 #container {
@@ -262,10 +283,11 @@ img {
   width: 100%;
   height: 25px;
   color: #37ba61;
-  opacity: 0.6;
+  opacity: 0.85;
   outline: none;
   margin-top: 6px;
   padding-top: 3px;
+  padding-bottom: 3px;
 }
 
 #selected_account {
@@ -277,6 +299,7 @@ img {
 #delete_account_button {
   color:  rgba(31, 52, 173, 0.938);
   border: 1px solid rgba(31, 92, 161, 0.438);
+  padding-bottom: 0.3em;
 }
 
 #new_user_button {
@@ -318,11 +341,12 @@ img {
 
 #icon_container {
   max-width:100%;
-  margin-bottom: 18%;
+  margin-bottom: 13%;
   margin-top: 25%;
 }
 
 #icon_container_small {
+  z-index: -1;
   max-width:100%;
   margin-bottom: 0%;
   margin-top: 0%;
@@ -364,11 +388,16 @@ img {
   border: 0px solid;
 }
 
+#majestro_title {
+  font-size: 1.3em;
+}
+
 #mpassword_input {
   width: 68%;
   margin: 1.5em 0 3.5em 0;
   position: absolute;
   bottom: 1em;
+  padding-bottom: 35px;
 }
 
 #add_site_account_input {
@@ -378,7 +407,18 @@ img {
 
 #ready_pw_title {
   margin-top: 30%;
+  padding-top: 110%;
   text-align: center;
+}
+
+.recognized_sign {
+  display: block;
+  opacity: 1;
+  color: rgba(123, 179, 65, 0.9);
+  top: 5.9em;
+  right: 2em;
+  position: fixed;
+  z-index: +1;
 }
 
 #select_site {
@@ -396,8 +436,8 @@ img {
 .fa-search {
   cursor: pointer;
   position: absolute;
-  padding-top: 0.7em;
-  left: 23%;
+  padding-top: 2.2em;
+  left: 9%;
   opacity: 0.2;
 }
 
@@ -407,7 +447,7 @@ img {
   background-clip: padding-box;
   font-family: Roboto;
   font-size: 12px;
-  margin: 0 1em 0.5em 1em;
+  margin: 1.5em 0.2em 0.5em 0.2em;
 
   border: none;
   border-radius:         26px;
@@ -422,7 +462,7 @@ img {
   outline: none;
   padding: 0 20px 0 35px;
   transition: all .06s linear;
-  width: 73%;
+  width: 95%;
   opacity: 0.7;
 }
 
@@ -437,6 +477,8 @@ img {
 
 #site_selector_panel {
   padding-bottom: 17%;
+  padding-right: 5px;
+  padding-left: 5px;
 }
 
 #site_select_error_message {
@@ -460,18 +502,40 @@ textarea:focus, input:focus, select:focus {
 }
 
 .div_password_status {
-  margin-top: 20%;
+  margin-top: 85px;
   justify-content: space-around;
 }
 
 #mp_check_sign {
+  background: #ffffff;
   text-align: center;
-  margin: 20% 30% 3% 30%;
   display: none;
   font-size: 2em;
   color: #ff9c2b;
-  border: 1px solid rgba(75, 75, 75, 0.2);
-  border-radius: 40px;
-  opacity: 0.9;
-  padding: 0.8em 0.95em 0.8em 0.95em;
+  border: 0px solid rgba(75, 75, 75, 0.2);
+  border-radius: 70px;
+  opacity: 1;
+  padding: 1.6em 1.8em 1.6em 1.8em;
+  margin: 20% 18% 3% 18%;
+}
+
+@keyframes glowFlux {
+	0% { box-shadow:
+    0 0 1px rgba(226, 204, 9, .0), /* inner white */
+    inset 0px 0 5px rgba(0, 206 ,99, .0), /* inner left magenta short */
+    inset 0px 0 0px rgba(0, 206 ,99, .0), /* inner right cyan broad */
+    0 0 3px rgba(0, 206 ,99, .0), /* outer white */ /* outer left magenta */
+    0px 0 7px #ccc; }
+	50% { box-shadow:
+    0 0 1px rgba(226, 204, 9, .3), /* inner white */
+    inset 0px 0 5px rgba(0, 206 ,99, .3), /* inner left magenta short */
+    inset 0px 0 0px rgba(0, 206 ,99, .5), /* inner right cyan broad */
+    0 0 3px rgba(0, 206 ,99, .1), /* outer white */ /* outer left magenta */
+    0px 0 7px #ccc; }
+	100% { box-shadow:
+    0 0 1px rgba(226, 204, 9, .0), /* inner white */
+    inset 0px 0 5px rgba(0, 206 ,99, .0), /* inner left magenta short */
+    inset 0px 0 0px rgba(0, 206 ,99, .0), /* inner right cyan broad */
+    0 0 3px rgba(0, 206 ,99, .0), /* outer white */ /* outer left magenta */
+    0px 0 7px #ccc;}
 }

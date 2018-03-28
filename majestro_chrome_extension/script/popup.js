@@ -62,7 +62,7 @@ document.addEventListener('keyup', function (event) {
 });
 
 /**
-*
+* Filter account-items based on Search bar input
 */
 $('#site_datalist').keyup(async () => {
   let str = $('#site_datalist').val();
@@ -141,6 +141,8 @@ function define_view2a_event_listeners() {
     }
 
   });
+
+
 
   $('#add_site_account_button').click(function () {
     $('#site_selector_panel').fadeOut('900', function () {
@@ -309,16 +311,20 @@ function define_view3_event_listeners() {
       const recognized = recognize_site(current_url, account_json.site_accounts);
 
       if (recognized) {
-        $('.div_recognized').fadeIn('500', () => {
-          $('#recognized_message').text(recognized, 'recognized.');
-        });
-
         $('#site_select_error_message').show();
+        $('.recognized_sign').show();
+
+        // Filter out non-recognized, sort and set recognized as first
+        let is_current = (x => x !== recognized);
+        account_json.site_accounts = account_json.site_accounts.filter(is_current);
         $('#selected_account').val(recognized);
+        $('#recognized_account').val(recognized);
+        $('#recognized_account').show();
       }
 
-      populate_site_list(account_json.site_accounts);
+      await populate_site_list(account_json.site_accounts, recognized);
       transition_to_id_selection();
+      $('.recognized_message').delay(2000).fadeOut("slow");
     }
   }
 
@@ -400,8 +406,9 @@ function define_view3_event_listeners() {
   * Populates the datalist with sites given as a parameter.
   * @param {Array} site_array - sites as an array of strings
   */
-  async function populate_site_list(site_array) {
-    await listCreator.populateAccountCards(site_array);
+  async function populate_site_list(site_array, recognized) {
+    recognized ? await listCreator.populateAccountCards(site_array, recognized)
+               : await listCreator.populateAccountCards(site_array, null);
   }
 
   /**
@@ -413,7 +420,8 @@ function define_view3_event_listeners() {
     let icon_container_small = document.getElementById('icon_container_small');
 
     icon_container.style.display = 'none';
-    icon_container_small.style.display = '';
+    $('#icon_container_small').css('position','fixed');
+    icon_container_small.style.display = 'block';
   }
 
   /**
