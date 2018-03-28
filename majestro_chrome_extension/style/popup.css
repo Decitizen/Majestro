@@ -305,7 +305,7 @@ img {
 #new_user_button {
   border: 0px solid;
   color: #b7b7b7;
-  margin-bottom: 0px;
+  margin-bottom: 15px;
   opacity: 0.6;
 }
 
@@ -363,9 +363,11 @@ img {
   margin-right: auto;
   opacity: 0.64;
   width: 49%;
+  display: none;
 }
 
 #import_export_panel, #import_panel {
+  display: none;
   width: 100%;
   padding-right: 0px;
   padding-left: 0px;
@@ -442,7 +444,6 @@ img {
 }
 
 #site_datalist {
-  background: transparent;
   background: rgba(163, 135, 106, 0.05);
   background-clip: padding-box;
   font-family: Roboto;
