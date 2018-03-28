@@ -408,7 +408,7 @@ function define_view3_event_listeners() {
   */
   async function populate_site_list(site_array, recognized) {
     recognized ? await listCreator.populateAccountCards(site_array, recognized)
-               : await listCreator.populateAccountCards(site_array, null);
+    : await listCreator.populateAccountCards(site_array, null);
   }
 
   /**
@@ -429,12 +429,11 @@ function define_view3_event_listeners() {
   * actual app.
   */
   function transition_to_id_selection() {
-    $('body').fadeOut('fast', function () {
-      // Smooth transition
+    // Smooth transition
+    $("#smart_number_panel").animate({width:'toggle'}, 100);
+    $('#smart_number_panel').fadeOut('900', () => {
       transform_icon();
-      $('#smart_number_panel').hide();
-      $('#site_selector_panel').show();
-      $('body').fadeIn('500');
+      $('#site_selector_panel').fadeIn();
     });
   }
 
