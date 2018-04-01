@@ -1,10 +1,4 @@
-
-
 export default class AccountList {
-
-  constructor() {
-  }
-
   createAccountCard(text, account_class) {
     let divElement = document.createElement("div");
     let b = document.createElement('button');
@@ -45,12 +39,35 @@ export default class AccountList {
 
     accounts = accounts.sort();
     await accounts.forEach(
-      ( account ) => this.createAccountCard(account, 'account_item')
+      ( account ) => this.createAccountCard( account, 'account_item' )
     );
 
     $('.account_button').click(function() {
+      if ($('#delete_account_button').css("display") ==  "none") {
+        $("#confirm_delete_site_account_button").animate({width:'toggle'}, 100);
+        $("#confirm_delete_site_account_button").fadeOut('fast', () => {
+          $('#delete_account_button').fadeIn('fast');
+        });
+      }
+
       $('#selected_account').val($(this).text());
       $('#site_select_error_message').hide();
+    });
+
+    $('.account_button').change( () => {
+      $(this).attr('color') === '#8a2be2' ? $('#selected_account').val($(this).text())
+                                          : $('#selected_account').val('');
+    });
+
+    $('#selected_account').change( () => {
+      $('#selected_account').val() != '' ? $('.delete_account_button').attr('disabled', true)
+                                         : $('.delete_account_button').attr('disabled', false);
+    });
+
+    $('.account_button').dblclick( async function() {
+      console.log('Dblclick was triggered.');
+      await this.click();
+      $('#id_submit_button').trigger('click');
     });
   }
 }

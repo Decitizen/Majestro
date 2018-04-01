@@ -33,7 +33,7 @@ export default class CryptoTools {
     return false;
   }
 
-   /**
+  /**
   * Handles appropriate hash sequence for master password
   * @param {String} mpassword - master password associated with account
   * @param {String} smart_number - smart number associated with account
@@ -89,42 +89,37 @@ export default class CryptoTools {
   * @param {String} mpassword - master password associated with account
   * @param {String} smart_number - smart number associated with account
   */
-  derive_password(mpassword, smart_number) {
+  async derive_password(mpassword, smart_number) {
     const CYCLES = 10000;
     const PW_BITS = 256;
     const MOD_VALUE = 17;
     const PW_CHAR_LENGTH = 24;
 
     let site_name = selected_account;
-    $('#smart_number_error').hide();
-    $('#masterpw_panel').fadeOut('slow', function () {
-      // Site-specific password is derived in 4 phases
+    // Site-specific password is derived in 4 phases
 
-      // 1) Concatenate smart number + master password + account name,
-      //    and hash resulting string by sha256
-      let pw_hash = sjcl.hash.sha256.hash(smart_number + mpassword + site_name.value);
+    // 1) Concatenate smart number + master password + account name,
+    //    and hash resulting string by sha256
+    let pw_hash = sjcl.hash.sha256.hash(smart_number + mpassword + site_name.value);
 
-      // 2) Concatenate smart number with account name,
-      //    and hash resulting string by sha256
-      let smart_hash = sjcl.hash.sha256.hash(smart_number + site_name.value);
-      smart_hash = sjcl.codec.hex.fromBits(smart_hash);
+    // 2) Concatenate smart number with account name,
+    //    and hash resulting string by sha256
+    let smart_hash = sjcl.hash.sha256.hash(smart_number + site_name.value);
+    smart_hash = sjcl.codec.hex.fromBits(smart_hash);
 
-      // 3) Using first hash as a password and second as a salt, derive the final hash
-      //    using PBKDF2 with more approriate parameters, format into base64
-      let derived_pw = sjcl.misc.pbkdf2(pw_hash, smart_hash, CYCLES, PW_BITS);
-      let password = sjcl.codec.base64.fromBits(derived_pw);
+    // 3) Using first hash as a password and second as a salt, derive the final hash
+    //    using PBKDF2 with more approriate parameters, format into base64
+    let derived_pw = sjcl.misc.pbkdf2(pw_hash, smart_hash, CYCLES, PW_BITS);
+    let password = sjcl.codec.base64.fromBits(derived_pw);
 
-      // 4) Select a 24 letter substring of the string.
-      //    Find the first placement based on smart number
-      //    modded with constant mod value
-      let begin_pw_placement = smart_number % MOD_VALUE;
+    // 4) Select a 24 letter substring of the string.
+    //    Find the first placement based on smart number
+    //    modded with constant mod value
+    let begin_pw_placement = smart_number % MOD_VALUE;
 
-      password = password.substring(begin_pw_placement, begin_pw_placement + PW_CHAR_LENGTH);
-      let copy_input = document.getElementById('copy_input');
-      copy_input.value = password;
-
-      $('#copy_panel').fadeIn('slow');
-    });
+    password = password.substring(begin_pw_placement, begin_pw_placement + PW_CHAR_LENGTH);
+    let copy_input = document.getElementById('copy_input');
+    copy_input.value = password;
   }
 }
 

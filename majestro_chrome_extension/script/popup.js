@@ -43,6 +43,7 @@ document.addEventListener('keyup', function (event) {
   event.preventDefault();
   let smart_number_panel = document.getElementById('smart_number_panel');
   let site_selector_panel = document.getElementById('site_selector_panel');
+  let copy_panel = document.getElementById('copy_panel');
 
   if (event.keyCode === ENTER_KEYCODE) {
     if (smart_number_panel.style.display != 'none') {
@@ -57,6 +58,9 @@ document.addEventListener('keyup', function (event) {
       let id_submit_button = document.getElementById('id_submit_button');
       id_submit_button.click();
 
+    } else if (copy_panel.style.display != "'none") {
+      let copy_button = document.getElementById('copy_button');
+      copy_button.click();
     }
   }
 });
@@ -105,7 +109,8 @@ function define_view2a_event_listeners() {
     const account_val = $('#selected_account').val();
 
     if (account_val !== '') {
-      $('#delete_account_button').fadeOut('400', function() {
+      $("#delete_account_button").animate({width:'toggle'}, 100);
+      $('#delete_account_button').fadeOut('fast', function() {
         $('#confirm_delete_site_account_button').fadeIn('400');
       });
     } else {
@@ -115,9 +120,13 @@ function define_view2a_event_listeners() {
   });
 
   $('#confirm_delete_site_account_button').click(function () {
-    $('#confirm_delete_site_account_button').fadeOut('100', function() {
+    $("#confirm_delete_site_account_button").animate({width:'toggle'}, 100);
+    $('#confirm_delete_site_account_button').fadeOut('fast', function() {
       const account_val = $('#selected_account').val();
       delete_account(account_val);
+
+      // Reset view
+      $('#selected_account').val('');
       $('#site_datalist').val('');
       $('#delete_account_button').fadeIn('400');
     })
@@ -128,9 +137,12 @@ function define_view2a_event_listeners() {
     let account_json = await load_from_local_storage('user_details');
     const current_url = $('#selected_account').val()
     console.log('Selected account:', current_url);
+
     const exists = account_json.site_accounts.some(x => String(x) === String(current_url));
     console.log('Exists:', exists);
+
     if (exists) {
+      $("#site_selector_panel").animate({width:'toggle'}, 100);
       $('#site_selector_panel').fadeOut('500', function () {
         $('#masterpw_panel').fadeIn('500');
         $('#site_select_error_message').hide();
@@ -139,12 +151,10 @@ function define_view2a_event_listeners() {
       $('#site_select_error_message').text('• Account doesn\'t exist.');
       $('#site_select_error_message').show();
     }
-
   });
 
-
-
   $('#add_site_account_button').click(function () {
+    $("#site_selector_panel").animate({width:'toggle'}, 100);
     $('#site_selector_panel').fadeOut('900', function () {
       $('#add_site_account_panel').fadeIn('900');
     });
@@ -158,6 +168,7 @@ function define_view2a_event_listeners() {
 function define_view2b_event_listeners() {
   // Submit new site/account -> to View2a
   $('#submit_new_site_account_button').click(function () {
+    $("#submit_new_site_account_button").animate({width:'toggle'}, 100);
     $('#submit_new_site_account_button').fadeOut('400', function() {
       $('#confirm_new_site_account_button').fadeIn('400');
     });
@@ -165,8 +176,10 @@ function define_view2b_event_listeners() {
 
   $('#confirm_new_site_account_button').click(async function () {
     if (!await add_new_account()) {
+      $("#confirm_new_site_account_button").animate({width:'toggle'}, 100);
       $('#confirm_new_site_account_button').fadeOut('100', function() {
         $('#exists_new_site_account_button').fadeIn('100', function() {
+          $("#exists_new_site_account_button").animate({width:'toggle'}, 100);
           $('#exists_new_site_account_button').fadeOut('100', function() {
             $('#submit_new_site_account_button').fadeIn('400');
           });
@@ -185,8 +198,8 @@ function define_view2b_event_listeners() {
 
   // Click cancel-button: <- to View2a
   $('#cancel_add_site_account_button').click(function () {
-    $('#add_site_account_panel').fadeOut('900', function () {
-      $('#site_selector_panel').fadeIn('900');
+    $('#add_site_account_panel').fadeOut('fast', function () {
+      $('#site_selector_panel').fadeIn('10');
     });
   });
 
@@ -216,8 +229,10 @@ function define_view3_event_listeners() {
   // Input master password: -> View4
   $('#mpassword_input').keyup(async function () {
     const mpassword_input = $('#mpassword_input').val();
-    let input_number = document.getElementById('smart_number_input');
-    let mpassword_check_sign = document.getElementById('mp_check_sign');
+
+    let input_number = document.getElementById('smart_number_input'),
+        mpassword_check_sign = document.getElementById('mp_check_sign');
+
     const validate_promise = await validate_masterpw_hash(mpassword_input,
       input_number.value);
       const valid_masterpw = await validate_promise;
@@ -225,16 +240,22 @@ function define_view3_event_listeners() {
       if (valid_masterpw) {
         mpassword_check_sign.style.color = '#65aa05';
         mpassword_check_sign.innerHTML = '';
-        $('#masterpw_input_error').fadeOut('fast');
 
-        crypto.derive_password(mpassword_input, input_number.value);
+        $('#masterpw_input_error').fadeOut('fast');
+        $('#smart_number_error').hide();
+
+        await crypto.derive_password( mpassword_input, input_number.value );
+
+        $('#mpassword_input').remove(); // Remove inputs from the DOM
+        $('#smart_number_input').remove();
+
+        $('#masterpw_panel').fadeOut('fast', () => $('#copy_panel').fadeIn('fast') );
       } else {
         if (mpassword_check_sign.offsetParent === null) {
           $('#mp_check_sign').fadeIn('900');
         }
         mpassword_check_sign.style.color = '#ff9c2b';
         mpassword_check_sign.innerHTML = '';
-
       }
     });
   }
@@ -317,9 +338,12 @@ function define_view3_event_listeners() {
         // Filter out non-recognized, sort and set recognized as first
         let is_current = (x => x !== recognized);
         account_json.site_accounts = account_json.site_accounts.filter(is_current);
+
         $('#selected_account').val(recognized);
         $('#recognized_account').val(recognized);
         $('#recognized_account').show();
+      } else {
+        $('#delete_account_button').attr("disabled", true);
       }
 
       await populate_site_list(account_json.site_accounts, recognized);
@@ -354,7 +378,10 @@ function define_view3_event_listeners() {
   */
   async function delete_account(account_val) {
     let account_json = await load_from_local_storage('user_details');
-    account_json.site_accounts = account_json.site_accounts.filter(e => String(e) !== account_val);
+
+    account_json.site_accounts = account_json
+                                  .site_accounts
+                                  .filter(e => String(e) !== account_val);
 
     try {
       save_data('user_details', account_json, false);
@@ -577,6 +604,7 @@ function define_view3_event_listeners() {
 
     return encr_user_details;
   }
+
   /**
   * In the first startup, if there is no account in chrome storage API, saves encrypted
   * test user details into chrome storage API.
