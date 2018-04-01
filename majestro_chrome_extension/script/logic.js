@@ -5,10 +5,11 @@
 */
 
 import CryptoTools from './crypto.js';
-import AccountList from './accountlist.js'
+import AccountList from './accountlist.js';
 
 const crypto = new CryptoTools();
 const listCreator = new AccountList();
+const TRANSITION_SPEED = 100;
 
 /**
 * Check if match for current site is found in the list.
@@ -66,22 +67,20 @@ export async function handle_smart_number(current_url) {
       $('#selected_account').val(recognized);
       $('#recognized_account').val(recognized);
       $('#recognized_account').show();
-    } else {
-      /* $('#delete_account_button').attr("disabled", true); */
     }
 
     await populate_site_list(account_json.site_accounts, recognized);
     transition_to_id_selection();
-    $('.recognized_message').delay(2000).fadeOut("slow");
+    $('.recognized_message').delay(2000).fadeOut('slow');
   }
 }
 
- /**
-  * Handles derivation of site-specific passwords.
-  * @param {String} mpassword - master password associated with account
-  * @param {String} smart_number - smart number associated with account
-  * @return {String} - resulting password
-  */
+/**
+* Handles derivation of site-specific passwords.
+* @param {String} mpassword - master password associated with account
+* @param {String} smart_number - smart number associated with account
+* @return {String} - resulting password
+*/
 export function derive_password(mpassword, smart_number) {
   return crypto.derive_password(mpassword, smart_number);
 }
@@ -114,8 +113,8 @@ export async function delete_account(account_val) {
   let account_json = await load_from_local_storage('user_details');
 
   account_json.site_accounts = account_json
-  .site_accounts
-  .filter(e => String(e) !== account_val);
+                                  .site_accounts
+                                  .filter(e => String(e) !== account_val);
 
   try {
     save_data('user_details', account_json, false);
@@ -169,7 +168,7 @@ export async function load_encr_user_details(sk) {
 */
 export async function populate_site_list(site_array, recognized) {
   recognized ? await listCreator.populateAccountCards(site_array, recognized)
-  : await listCreator.populateAccountCards(site_array, null);
+             : await listCreator.populateAccountCards(site_array, null);
 }
 
 /**
@@ -191,7 +190,7 @@ function transform_icon() {
 */
 export function transition_to_id_selection() {
   // Smooth transition
-  $("#smart_number_panel").animate({width:'toggle'}, 100);
+  $('#smart_number_panel').animate({width:'toggle'}, TRANSITION_SPEED);
   $('#smart_number_panel').fadeOut('900', () => {
     transform_icon();
     $('#site_selector_panel').fadeIn();

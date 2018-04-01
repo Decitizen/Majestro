@@ -6,7 +6,7 @@
 
 import * as Logic from './logic.js';
 const USER_DATA_FILENAME = 'userdata.txt';
-
+const TRANSITION_SPEED = 100;
 /**
 * Defines view-specific eventlisteners.
 * View flowchart:
@@ -54,7 +54,7 @@ document.addEventListener('keyup', function (event) {
       let id_submit_button = document.getElementById('id_submit_button');
       id_submit_button.click();
 
-    } else if (copy_panel.style.display != "'none") {
+    } else if (copy_panel.style.display != 'none') {
       let copy_button = document.getElementById('copy_button');
       copy_button.click();
     }
@@ -105,7 +105,7 @@ function define_view2a_event_listeners() {
     const account_val = $('#selected_account').val();
 
     if (account_val !== '') {
-      $("#delete_account_button").animate({width:'toggle'}, 100);
+      $('#delete_account_button').animate({width:'toggle'}, TRANSITION_SPEED);
       $('#delete_account_button').fadeOut('fast', function() {
         $('#confirm_delete_site_account_button').fadeIn('400');
       });
@@ -116,7 +116,7 @@ function define_view2a_event_listeners() {
   });
 
   $('#confirm_delete_site_account_button').click(function () {
-    $("#confirm_delete_site_account_button").animate({width:'toggle'}, 100);
+    $('#confirm_delete_site_account_button').animate({width:'toggle'}, TRANSITION_SPEED);
     $('#confirm_delete_site_account_button').fadeOut('fast', function() {
       const account_val = $('#selected_account').val();
       Logic.delete_account(account_val);
@@ -138,7 +138,7 @@ function define_view2a_event_listeners() {
     console.log('Exists:', exists);
 
     if (exists) {
-      $("#site_selector_panel").animate({width:'toggle'}, 100);
+      $('#site_selector_panel').animate({width:'toggle'}, TRANSITION_SPEED);
       $('#site_selector_panel').fadeOut('500', function () {
         $('#masterpw_panel').fadeIn('500');
         $('#site_select_error_message').hide();
@@ -150,7 +150,7 @@ function define_view2a_event_listeners() {
   });
 
   $('#add_site_account_button').click(function () {
-    $("#site_selector_panel").animate({width:'toggle'}, 100);
+    $('#site_selector_panel').animate({width:'toggle'}, TRANSITION_SPEED);
     $('#site_selector_panel').fadeOut('900', function () {
       $('#add_site_account_panel').fadeIn('900');
     });
@@ -164,7 +164,7 @@ function define_view2a_event_listeners() {
 function define_view2b_event_listeners() {
   // Submit new site/account -> to View2a
   $('#submit_new_site_account_button').click(function () {
-    $("#submit_new_site_account_button").animate({width:'toggle'}, 100);
+    $('#submit_new_site_account_button').animate({width:'toggle'}, TRANSITION_SPEED);
     $('#submit_new_site_account_button').fadeOut('400', function() {
       $('#confirm_new_site_account_button').fadeIn('400');
     });
@@ -172,11 +172,11 @@ function define_view2b_event_listeners() {
 
   $('#confirm_new_site_account_button').click(async function () {
     if (!await Logic.add_new_account()) {
-      $("#confirm_new_site_account_button").animate({width:'toggle'}, 100);
-      $('#confirm_new_site_account_button').fadeOut('100', function() {
-        $('#exists_new_site_account_button').fadeIn('100', function() {
-          $("#exists_new_site_account_button").animate({width:'toggle'}, 100);
-          $('#exists_new_site_account_button').fadeOut('100', function() {
+      $('#confirm_new_site_account_button').animate({width:'toggle'}, TRANSITION_SPEED);
+      $('#confirm_new_site_account_button').fadeOut('TRANSITION_SPEED', function() {
+        $('#exists_new_site_account_button').fadeIn('TRANSITION_SPEED', function() {
+          $('#exists_new_site_account_button').animate({width:'toggle'}, TRANSITION_SPEED);
+          $('#exists_new_site_account_button').fadeOut('TRANSITION_SPEED', function() {
             $('#submit_new_site_account_button').fadeIn('400');
           });
         });
